@@ -28,9 +28,9 @@ int &get_private_i(Cls &cls) {
 int main()
 {
 	Cls * cls = new Cls('t', 1.0, 5);
-	char & refC = get_c(*cls); 
-	double & refD = get_d(*cls);
-	int & refI = get_i(*cls);
+	char & refC = get_private_c(*cls); 
+	double & refD = get_private_d(*cls);
+	int & refI = get_private_i(*cls);
 
 	cout << refC << endl;	
         cout << refD << endl;
