@@ -50,11 +50,9 @@ private:
 
 bool instanceOf(Expression const *left, Expression const *right)
 {
-    int* vptrLeft =  *(int**)left;
-    int* vptrRight =  *(int**)right;    
+    int* vptrLeft = *(int**)left;
+    int* vptrRight = *(int**)right;    
     return vptrLeft == vptrRight;
-
-    // put your code here
 }
 
 
