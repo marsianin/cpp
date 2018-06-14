@@ -48,9 +48,22 @@ private:
     char op;
 };
 
+bool instanceOf(Expression const *left, Expression const *right)
+{
+    int* vptrLeft =  *(int**)left;
+    int* vptrRight =  *(int**)right;    
+    return vptrLeft == vptrRight;
+
+    // put your code here
+}
+
+
 int main(){
     Expression * sube = new BinaryOperation(new Number(4.5), '*', new Number(5));
     Expression * expr = new BinaryOperation(new Number(3), '+', sube);
     std::cout << expr->evaluate() << std::endl;
+   
+    std::cout << (instanceOf(sube, new Number(3)) ? "Yes" : "No") << std::endl;    
+
     delete expr;
 }
