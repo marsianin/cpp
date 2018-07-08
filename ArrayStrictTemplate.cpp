@@ -82,7 +82,7 @@ int main() {
     Array<string> *arr5 = new Array<string>(10,"42");
     Array<NonCopyable> *arr6 = new Array<NonCopyable>(5, 10);
     arr4 = arr3;
-ы
+
     for (size_t i = 0; i < arr0->size(); i++)
         cout << "Value of " << i << " element is " << (*arr1)[i] << endl;
     cout<<endl;
