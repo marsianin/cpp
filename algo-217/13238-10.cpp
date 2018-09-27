@@ -1,55 +1,77 @@
 /**
-Задача на программирование: покрыть отрезки точками
+Задача на программирование: непрерывный рюкзак
 
 
-По данным n отрезкам необходимо найти множество точек минимального размера, для которого каждый из отрезков содержит хотя бы одну из точек.
+Первая строка содержит количество предметов 1≤n≤103 и вместимость рюкзака 0≤W≤2⋅106.
+ Каждая из следующих n строк задаёт стоимость 0≤ci≤2⋅106 и объём 0<wi≤2⋅106 предмета
+ (n, W, ci, wi — целые числа). Выведите максимальную стоимость частей предметов (от
+ каждого предмета можно отделить любую часть, стоимость и объём при этом пропорционально уменьшатся),
+ помещающихся в данный рюкзак, с точностью не менее трёх знаков после запятой.
 
-В первой строке дано число 1≤n≤100 отрезков. Каждая из последующих n строк содержит по два числа 0≤l≤r≤109, задающих начало и конец отрезка. Выведите оптимальное число m точек и сами m точек. Если таких множеств точек несколько, выведите любое из них.
+Sample Input 1:
+3 50
+60 20
+100 50
+120 30
 
+Sample Output 1:
+
+180.000
+
+Sample Input 2:
+2 25
+250 23
+120 11
+
+Sample Output 2:
+272.174
  */
+
+#include <cstdint>
 #include <iostream>
-#include <utility>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
 
-using Segment = std::pair<int, int>;
+struct Item final {
+    int weight;
+    int value;
+};
 
-bool sortbysec(const Segment &a, const Segment &b) {
-    return (a.second < b.second);
+bool sortbyprice(const Item &a, const Item &b) {
+    return (static_cast <double>(a.value)/a.weight  > static_cast <double>(b.value)/b.weight);
 }
 
-std::vector <int> get_covering_set(std::vector <Segment> segments) {
-    std::vector <int> result;
-    sort(segments.begin(), segments.end(), sortbysec);
+double get_max_knapsack_value(int capacity, std::vector <Item> items) {
+    double value = 0.0;
+    sort(items.begin(), items.end(), sortbyprice);
 
-    for(std::size_t i = 0; i < segments.size(); i++) {
-        int right = segments.at(i).second;
-        result.push_back(segments[i].second);
-
-        for (int k = i+1; k < segments.size(); k++) {
-            if (segments.at(k).first <= right) {
-                i++;
-            } else {
-                break;
-            }
+    // take items while there is empty space in knapsack
+    for (auto &item:items) {
+        if (capacity >= item.weight) {
+            capacity -= item.weight;
+            value += item.value;
+        } else {
+            value += item.value * (static_cast <double>(capacity) / item.weight);
+            break;
         }
     }
 
-    return result;
+    return value;
 }
 
 int main(void) {
-    int segments_count;
-    std::cin >> segments_count;
-    std::vector <Segment> segments(segments_count);
-    for (auto &s:segments) {
-        std::cin >> s.first >> s.second;
+    int number_of_items;
+    int knapsack_capacity;
+    std::cin >> number_of_items >> knapsack_capacity;
+    std::vector <Item> items(number_of_items);
+    for (int i = 0; i < number_of_items; i++) {
+        std::cin >> items[i].value >> items[i].weight;
     }
 
-    auto points = get_covering_set(std::move(segments));
-    std::cout << points.size() << std::endl;
-    for (auto point:points) {
-        std::cout << point << " ";
-    }
-    std::cout << std::endl;
+    double max_knapsack_value = get_max_knapsack_value(knapsack_capacity, std::move(items));
+
+    std::cout.precision(10);
+    std::cout << std::fixed << std::setprecision(3) << max_knapsack_value << std::endl;
+    return 0;
 }
