@@ -84,6 +84,36 @@ func setupCodes(node *letter, prefix string, letterKeyMapListObj letterKeyMapLis
 	setupCodes(node.right, prefix + "1", letterKeyMapListObj)
 }
 
+func decodeSymbol(str *string, curStr string, node *letter) string {
+	if len(curStr) > 0 && node.code == curStr {
+		return node.key
+	}
+
+	tmp := (*str)[0:1]
+	curStr = curStr + tmp
+	*str = (*str)[1:]
+
+	if tmp == "0" {
+		return decodeSymbol(str, curStr, node.left)
+	} else {
+		return decodeSymbol(str, curStr, node.right)
+	}
+}
+
+func decode(str string, root *letter) string {
+	if len(str) == 0 {
+		return str
+	}
+
+	var result string
+
+	for len(str) > 0 {
+		result += decodeSymbol(&str, "", root)
+	}
+
+	return result
+}
+
 func main() {
     var str string
     fmt.Scanf("%s", &str)
