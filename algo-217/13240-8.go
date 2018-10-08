@@ -30,52 +30,62 @@ ExtractMax
 Sample Output:
 200
 500
+
+Теория
+http://neerc.ifmo.ru/wiki/index.php?title=%D0%94%D0%B2%D0%BE%D0%B8%D1%87%D0%BD%D0%B0%D1%8F_%D0%BA%D1%83%D1%87%D0%B0
  */
 
-func up(heap *[]int, i int)  {
+type heap struct {
+	data []int
+	size int
+}
+
+func (h *heap) up(i int)  {
  	i = i - 1
  	if i == 0 {
  		return
 	}
 
-	for (*heap)[i] > (*heap)[(i-1)/2] {
-		(*heap)[i], (*heap)[(i-1)/2] = (*heap)[(i-1)/2], (*heap)[i]
+	for h.data[i] > h.data[(i-1)/2] {
+		h.data[i], h.data[(i-1)/2] = h.data[(i-1)/2], h.data[i]
 		i = (i-1)/2
 	}
 }
 
-func down(heap *[]int, i int, heapSize int) {
-	for (2*i + 1) <= heapSize {
+func (h *heap) down(i int) {
+	for (2*i + 1) <= h.size {
 		left := 2*i + 1
 		right := 2*i + 2
 
 		j := left
-		if right <= heapSize && (*heap)[right] > (*heap)[left] {
+		if right <= h.size && h.data[right] > h.data[left] {
 			j = right
 		}
 
-		if (*heap)[i] >= (*heap)[j] {
+		if h.data[i] >= h.data[j] {
 			break
 		}
 
-		(*heap)[i], (*heap)[j] = (*heap)[j], (*heap)[i]
+		h.data[i], h.data[j] = h.data[j], h.data[i]
 		i = j
 	}
 }
 
-func extractMax(heap *[]int, heapSize *int) int {
-    max := (*heap)[0]
-	(*heap)[0] = (*heap)[*heapSize - 1]
-	(*heap)[*heapSize - 1] = 0
-	*heapSize = *heapSize - 1
-    down(heap, 0, *heapSize)
+
+func (h *heap) extractMax() int {
+    max := h.data[0]
+	h.data[0] = h.data[h.size - 1]
+	h.data[h.size - 1] = 0
+	h.size--
+	h.down(0)
+
     return max
 }
 
-func insert(heap *[]int, elem int, heapSize *int) {
-	(*heap)[*heapSize] = elem
-	*heapSize = *heapSize + 1
-	up(heap, *heapSize)
+func (h *heap) insert(elem int) {
+	h.data[h.size] = elem
+	h.size++
+	h.up(h.size)
 }
 
 func main()  {
@@ -83,9 +93,11 @@ func main()  {
 
 	fmt.Scanf("%d", &n)
 
-	heap := make([]int, n + 1, n + 1)
+	heapObj := heap{
+		make([]int, n + 1, n + 1),
+		0,
+	}
 
-	heapSize := 0
 	var tmp int
 
 	reader := bufio.NewReader(os.Stdin)
@@ -94,10 +106,10 @@ func main()  {
 		tmpStr = strings.Trim(tmpStr, "\n")
 
 		if tmpStr == "ExtractMax" {
-			fmt.Println(extractMax(&heap, &heapSize))
+			fmt.Println(heapObj.extractMax())
 		} else {
 			fmt.Sscanf(tmpStr, "Insert %d", &tmp)
-			insert(&heap, tmp, &heapSize)
+			heapObj.insert(tmp)
 		}
 	}
 }
